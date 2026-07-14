@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    #fallback {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      padding: 14px 10px;
+      box-sizing: border-box;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: rgba(254, 254, 255, 0.76);
+      background: rgba(16, 14, 27, 0.8);
+      font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-align: center;
+    }
+
+    #fallback strong {
+      display: block;
+      margin-top: 6px;
+      color: #08dfcd;
+      font-size: 13px;
+    }
+
+    body.is-ready #fallback {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="fallback">Live2D<strong>Loading</strong></div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var model = params.get("model") || "https://cdn.jsdelivr.net/npm/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json";
+
+      function boot() {
+        if (!window.L2Dwidget) {
+          return;
+        }
+
+        window.L2Dwidget.init({
+          model: {
+            jsonPath: model
+          },
+          display: {
+            position: "right",
+            width: 150,
+            height: 250,
+            hOffset: 0,
+            vOffset: -12
+          },
+          mobile: {
+            show: true,
+            scale: 0.58
+          },
+          react: {
+            opacityDefault: 0.9,
+            opacityOnHover: 1
+          },
+          dialog: {
+            enable: false
+          }
+        });
+        window.setTimeout(function () {
+          document.body.classList.add("is-ready");
+          window.parent.postMessage({ type: "live2d-ready" }, window.location.origin);
+        }, 700);
+      }
+
+      var script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js";
+      script.async = true;
+      script.onload = boot;
+      document.head.appendChild(script);
+    })();
+  </script>
+</body>
+</html>
